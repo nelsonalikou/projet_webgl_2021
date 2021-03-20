@@ -36,7 +36,7 @@ class SolarSystem
         const controls = new OrbitControls( camera, renderer.domElement );
 
         //AmbientLight
-        const ambientLight = new THREE.AmbientLight( 0xFFFFFF ); // soft white light
+        const ambientLight = new THREE.AmbientLight( 0xFFFFFF,0.2 ); // soft white light
         //scene.add( ambientLight );
 
         /*light = new THREE.DirectionalLight( 0xdddddd, 1.5 );
@@ -53,11 +53,13 @@ class SolarSystem
         /**** Terre  *****/
         const earth = this.createStar(2,50,50,"terre");
         earth.receiveShadow = true;
+        earth.castShadow = true;
         //scene.add( earth );
 
         /**** Lune  *****/
         const moon = this.createStar(1,50,50,"lune");
         moon.receiveShadow = true;
+        moon.castShadow = true;
         //scene.add( moon );
 
 
@@ -86,81 +88,20 @@ class SolarSystem
         //scene.add( sun );
         /*Pour le soleil*/
 
-            /*    Soleil   */
-            /*let clock = new THREE.Clock();
-
-            const textureLoader = new THREE.TextureLoader();
-
-            let uniforms = {
-
-                "fogDensity": { value: 0.45 },
-                "fogColor": { value: new THREE.Vector3( 0, 0, 0 ) },
-                "time": { value: 1.0 },
-                "uvScale": { value: new THREE.Vector2( 3.0, 1.0 ) },
-                "texture1": { value: textureLoader.load( '../images/cloud.png' ) },
-                "texture2": { value: textureLoader.load( '../images/lavatile.jpg' ) }
-
-            };
-
-            uniforms[ "texture1" ].value.wrapS = uniforms[ "texture1" ].value.wrapT = THREE.RepeatWrapping;
-            uniforms[ "texture2" ].value.wrapS = uniforms[ "texture2" ].value.wrapT = THREE.RepeatWrapping;
-
-            const size = 8;
-
-            const material = new THREE.ShaderMaterial( {
-
-                uniforms: uniforms,
-                vertexShader: document.getElementById( 'vertexShader' ).textContent,
-                fragmentShader: document.getElementById( 'fragmentShader' ).textContent
-
-            } );
-
-            let sun = new THREE.Mesh( new THREE.SphereGeometry( size, 50, 50 ), material );
-            sun.rotation.x = 0.3;
-            scene.add( sun );
-
-            const renderModel = new RenderPass( scene, camera );
-            const effectBloom = new BloomPass( 1.25 );
-            const effectFilm = new FilmPass( 0.35, 0.95, 2048, false );
-
-            let composer = new EffectComposer( renderer );
-
-            composer.addPass( renderModel );
-            composer.addPass( effectBloom );
-            composer.addPass( effectFilm );
-
-            //
-
-            onWindowResize();
-
-            window.addEventListener( 'resize', onWindowResize );
-
-        
-
-        function onWindowResize() {
-
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-
-            renderer.setSize( window.innerWidth, window.innerHeight );
-            composer.setSize( window.innerWidth, window.innerHeight );
-
-        }*/
-
 
 
         //Point Light
-        const pointLight = new THREE.PointLight( 0xffff00, 10, 300,2 );
+        const pointLight = new THREE.PointLight( 0xffff00, 5, 300,2 );
         //pointLight.position.set( sun.position.x, sun.position.y, sun.position.z );
         pointLight.position.set( 0, 0, 0 );
         pointLight.castShadow = true;
-        pointLight.penumbra = 0.8;
+        //pointLight.penumbra = 0.8;
         //scene.add( pointLight );
 
 
         //Set up shadow properties for the light
-        pointLight.shadow.mapSize.width = 512; // default
-        pointLight.shadow.mapSize.height = 512; // default
+        pointLight.shadow.mapSize.width = 1024; // default
+        pointLight.shadow.mapSize.height = 1024; // default
         pointLight.shadow.camera.near = 0.5; // default
         pointLight.shadow.camera.far = 500; // default
 
@@ -170,9 +111,6 @@ class SolarSystem
 
 
         //space
-        /*const geometry = new THREE.SphereGeometry(10,10,10)
-        const material = new THREE.MeshNormalMaterial({wireframe : true});
-        const space = new THREE.Mesh(geometry,material);*/
         const space = this.createStar(40,50,50,"galaxie");
         //scene.add(space);
         
@@ -214,20 +152,6 @@ class SolarSystem
         var angleTerre = 0;
         var angleLune = 0;
         
-
-        /* //AJout de groupes d'objets
-        var group = new THREE.Group();
-        scene.add( group );
-
-        group.add( mesh1 );
-        group.add( mesh2 );
-
-        mesh2.visible = false;
-        group.remove( mesh2 );
-
-        group.children // mesh1
-        group.parent // scene
-        */
         window.onkeydown = function(e) {
             switch (e.keyCode) {
               case 32:
@@ -235,18 +159,6 @@ class SolarSystem
               break;
             }
         };
-
-
-           
-        /*function animate() {
-
-            requestAnimationFrame( animate );
-
-            render();
-
-        }*/
-
-
 
         let system = this;
         let comete = system.etoileFilante();
@@ -316,15 +228,7 @@ class SolarSystem
                     //déplacment de la comete
                     comete.position.z += 1;
                 }
-                /*const delta = 5 * clock.getDelta();
 
-                uniforms[ 'time' ].value += 0.2 * delta;
-
-                sun.rotation.y += 0.0125 * delta;
-                sun.rotation.x += 0.05 * delta;
-
-                renderer.clear();
-                composer.render( 0.01 );*/
             }
             
 

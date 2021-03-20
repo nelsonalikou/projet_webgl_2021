@@ -133,17 +133,6 @@
 
 				//
 
-				var loader = new THREE.TextureLoader();
-				var texture = loader.load("../images/texture_lune.jpg");
-				let mesh2 = new THREE.Mesh( new THREE.SphereGeometry( size, 30, 30 ), new THREE.MeshPhongMaterial({
-				color: 0xaaaaaa,
-				specular: 0x333333,
-				shininess: 15,
-				map: texture,//colorMap,
-				}) );
-				mesh2.position.x = 1;
-				scene.add( mesh2 );
-
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				container.appendChild( renderer.domElement );
