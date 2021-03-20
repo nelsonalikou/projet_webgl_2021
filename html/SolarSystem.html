@@ -7,11 +7,19 @@
     <title>Solar System</title>
     <style>
       html, body { margin: 0; padding: 0; overflow: hidden; }
+      div {
+        position:absolute;
+        color: aliceblue;
+      }
+      
     </style>
+        <script scr="https://rawgit.com/jeromeetienne/threex.domevents/master/threex.domevents.js"></script>
   </head>
   <body>
-    <script src="../js/Three.js"></script>
-    <script src="../js/OrbitControls.js"></script>
-    <script src="../js/SolarSystem.js"></script>
+    <script type="module"> 
+      import SolarSystem from "../js/SolarSystem.js";
+      new SolarSystem();
+    </script>
+    <div id="texte">Progression 60 %</div>
   </body>
 </html>
