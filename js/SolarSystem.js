@@ -220,10 +220,10 @@ class SolarSystem
         let comete = system.etoileFilante();
         scene.add( comete );
 
-        let cometes = system.createStar(2,50,50,"comete");
+        /*let cometes = system.createStar(2,50,50,"comete");
         cometes.position.x =  0;
         cometes.position.y =  15;
-        cometes.position.z =  -30;
+        cometes.position.z =  -30;*/
 
         scene.add( cometes );
 
@@ -311,8 +311,8 @@ class SolarSystem
 
     etoileFilante(){
         let comete = this.createStar(0.5, 50,50, "comete");
-        comete.position.x = Math.floor(Math.random() * 100) + 25;
-        comete.position.y = Math.floor(Math.random() * 100) + 25;
+        comete.position.x = 0;
+        comete.position.y = (Math.floor(Math.random() * 100) + 15);
         comete.position.z = -(Math.floor(Math.random() * 100) + 70);
         //comete.position.set(100,0,0);
         return comete;
