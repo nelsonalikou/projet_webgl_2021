@@ -14,7 +14,6 @@ class SolarSystem
 /** @constructor */
     constructor ()
     {
-        //const container = document.getElementById( 'container' );
 
         var scene = new THREE.Scene();
         var aspect = window.innerWidth / window.innerHeight;
@@ -31,11 +30,14 @@ class SolarSystem
         document.body.appendChild( renderer.domElement );
 
 
+        
+
+
         const controls = new OrbitControls( camera, renderer.domElement );
 
         //AmbientLight
         const ambientLight = new THREE.AmbientLight( 0xFFFFFF ); // soft white light
-        scene.add( ambientLight );
+        //scene.add( ambientLight );
 
         /*light = new THREE.DirectionalLight( 0xdddddd, 1.5 );
         light.position.set( -80, 80, 80 );
@@ -50,17 +52,28 @@ class SolarSystem
 
         /**** Terre  *****/
         const earth = this.createStar(2,50,50,"terre");
-        scene.add( earth );
+        earth.receiveShadow = true;
+        //scene.add( earth );
 
         /**** Lune  *****/
         const moon = this.createStar(1,50,50,"lune");
-        scene.add( moon );
+        moon.receiveShadow = true;
+        //scene.add( moon );
 
 
         //Spot Light
         const spotLight = new THREE.SpotLight( 0x00ff00 );
         spotLight.position.set( 10, 10, 10 );
-        scene.add( spotLight );
+        spotLight.castShadow = true;
+
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+
+        spotLight.shadow.camera.near = 500;
+        spotLight.shadow.camera.far = 4000;
+        spotLight.shadow.camera.fov = 30;
+
+        //scene.add( spotLight );
         
         /*const spotLightHelper = new THREE.SpotLightHelper( spotLight );
         scene.add( spotLightHelper );*/
@@ -68,7 +81,9 @@ class SolarSystem
 
         /**** Soleil  *****/
         const sun = this.createStar(8,50,50,"soleil");
-        scene.add( sun );
+        sun.castShadow = true; //default is false
+        sun.receiveShadow = false; //default
+        //scene.add( sun );
         /*Pour le soleil*/
 
             /*    Soleil   */
@@ -135,18 +150,32 @@ class SolarSystem
 
 
         //Point Light
-        const pointLight = new THREE.PointLight( 0xffff00, 2, 300,2 );
-        pointLight.position.set( sun.position.x, sun.position.y, sun.position.z );
-        pointLight.penumbra = 0.8
-        scene.add( pointLight );
+        const pointLight = new THREE.PointLight( 0xffff00, 10, 300,2 );
+        //pointLight.position.set( sun.position.x, sun.position.y, sun.position.z );
+        pointLight.position.set( 0, 0, 0 );
+        pointLight.castShadow = true;
+        pointLight.penumbra = 0.8;
+        //scene.add( pointLight );
+
+
+        //Set up shadow properties for the light
+        pointLight.shadow.mapSize.width = 512; // default
+        pointLight.shadow.mapSize.height = 512; // default
+        pointLight.shadow.camera.near = 0.5; // default
+        pointLight.shadow.camera.far = 500; // default
 
         /*const sphereSize = 1;
         const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
         scene.add( pointLightHelper );*/
 
 
+        //space
+        /*const geometry = new THREE.SphereGeometry(10,10,10)
+        const material = new THREE.MeshNormalMaterial({wireframe : true});
+        const space = new THREE.Mesh(geometry,material);*/
+        const space = this.createStar(40,50,50,"galaxie");
+        //scene.add(space);
         
-
         //Scene
         var loader = new THREE.TextureLoader();
         var texture = loader.load("../images/texture_galaxie.jpg");
@@ -178,7 +207,10 @@ class SolarSystem
         controls.target.set(focus[0],focus[1],focus[2]);*/
 
         var pause = false;
+
         
+
+
         var angleTerre = 0;
         var angleLune = 0;
         
@@ -218,19 +250,44 @@ class SolarSystem
 
         let system = this;
         let comete = system.etoileFilante();
-        scene.add( comete );
+        //scene.add( comete );
 
         /*let cometes = system.createStar(2,50,50,"comete");
         cometes.position.x =  0;
         cometes.position.y =  15;
-        cometes.position.z =  -30;*/
+        cometes.position.z =  -30;
 
-        scene.add( cometes );
+        scene.add( cometes );*/
+
+        /**les étoiles */
+        var stars = new THREE.Group();
+        //scene.add( stars );
+        stars.add( sun );
+        stars.add( moon );
+        stars.add( earth );
+        stars.add( comete );
+
+        /**les lumières */
+        var lights = new THREE.Group();
+        //scene.add( lights );
+        lights.add(spotLight);
+        lights.add(ambientLight);
+        lights.add(pointLight);
+
+
+        var galaxie = new THREE.Group();
+        scene.add( galaxie );
+        galaxie.add(space);
+        galaxie.add(stars);
+        galaxie.add(lights);
+
 
         var render = function () {
             var id = requestAnimationFrame( render );
-            
+            system.Panel('stop','Paused',"0px");
             if(!pause){
+
+                system.Panel('stop','continue',"0px");
                 //Rotation de la Terre sur elle meme
                 system.starRotation(earth,0.05);
         
@@ -248,13 +305,16 @@ class SolarSystem
                 //Mise du changement de position de la camera
                 controls.target.set(focus.position.x,focus.position.y,focus.position.z);
 
+                system.Panel('terre','Coordonnées Terre en X : '+ Math.round(earth.position.x*100)/100 + ', Y : ' + Math.round(earth.position.y*100)/100 + ', Z : ' + Math.round(earth.position.z*100)/100, "40px");
+                system.Panel('lune','Coordonnées Lune en X : '+ Math.round(moon.position.x*100)/100 + ', Y : ' + Math.round(moon.position.y*100)/100 + ', Z : ' + Math.round(moon.position.z*100)/100, "80px");
+                system.Panel('soleil','Coordonnées Soleil en X : '+ Math.round(sun.position.x*100)/100 + ', Y : ' + Math.round(sun.position.y*100)/100 + ', Z : ' + Math.round(sun.position.z*100)/100, "120px");
+
                 //Mise en place de la pause
                 //cancelAnimationFrame( id );
                 var chance = Math.floor(Math.random() * 10) + 1;
-                console.log(chance);
                 if(chance % 2 == 0){
                     //déplacment de la comete
-                    comete.position.z += 0.5;
+                    comete.position.z += 1;
                 }
                 /*const delta = 5 * clock.getDelta();
 
@@ -312,11 +372,23 @@ class SolarSystem
     etoileFilante(){
         let comete = this.createStar(0.5, 50,50, "comete");
         comete.position.x = 0;
-        comete.position.y = (Math.floor(Math.random() * 100) + 15);
-        comete.position.z = -(Math.floor(Math.random() * 100) + 70);
+        comete.position.y = (Math.floor(Math.random() * 100));
+        comete.position.z = -(Math.floor(Math.random() * 100) + 50);
         //comete.position.set(100,0,0);
         return comete;
     }
+
+    /**
+     * Pour l'affichage
+     */
+    Panel(id,innerHTML,top) {
+        var popUpDiv = document.getElementById(id);
+        popUpDiv.style.width = "350px";
+        //popUpDiv.style.margin = "auto";
+        popUpDiv.style.top = top;
+        popUpDiv.innerHTML = innerHTML;
+        
+    };
 }
 
 export default SolarSystem;
